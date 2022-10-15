@@ -7,23 +7,18 @@ headers=["Pragma: no-cache",
                 "Accept-Language: zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
                 "Sec-WebSocket-Extensions: permessage-deflate; client_max_window_bits",
     ]
-temp =1
-while temp:
-    ws=websocket.WebSocket()
-    #建立websocket连接，这里传入了 header ，需要注意header的写入方式
-    ws.connect("wss://wechat.v2.traceint.com/ws?ns=prereserve/queue",
+ws = websocket.WebSocket()
+    # 建立websocket连接，这里传入了 header ，需要注意header的写入方式
+ws.connect("wss://wechat.v2.traceint.com/ws?ns=prereserve/queue",
                header=headers)
-    if ws.connected:
-        #接收实时数据，并打印出来
-        ws.send('{"ns":"prereserve/queue","msg":""}')
-        res =ws.recv()
-        print(res)
-        if res.find('"data":0')>0:
-            temp = 0
-            print('连接排队成功')
-        if res.find('1000')>0:
-            print('连接失败，检查cookie')
-
+if ws.connected:
+        # 接收实时数据，并打印出来
+        while True:
+            ws.send('{"ns":"prereserve/queue","msg":""}')
+            a = ws.recv()
+            if a.find('u6392') != -1:#排队成功返回的第一个字符
+                break
+        # 关闭连接
         ws.close()
-        #关闭连接
 
+    
